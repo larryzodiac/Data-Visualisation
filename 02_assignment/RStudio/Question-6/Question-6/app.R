@@ -2,7 +2,7 @@ library(shiny)
 library("leaflet")
 library("tidyverse")
 
-qpal <- colorFactor("Paired", tourism$Purpose)
+qpal <- colorFactor("Set2", tourism$Purpose)
 
 ui <- fluidPage(
   titlePanel("Visitors to Ireland"),
@@ -25,6 +25,14 @@ ui <- fluidPage(
           "Irelands Ancient East",
           "Dublin - Breath of Fresh Air"
         )
+      ),
+      selectInput(
+        "nationality",
+        "Nationality",
+        choices =c(
+          "British",
+          "North American"
+        )
       )
     ),
     leafletOutput("map")
@@ -36,13 +44,20 @@ server <- function(input, output) {
   output$map <- renderLeaflet({
     tourism = tourism[tourism$Purpose == input$purpose, ]
     tourism = tourism[tourism$Brand == input$brand, ]
+    tourism = tourism[tourism$Nationality == input$nationality, ]
     print(input$purpose)
     
     tourism %>%
       leaflet() %>%
       addTiles() %>%
-      addCircleMarkers(lat = ~Latitude, lng = ~Longitude) %>%
-      setView(lng = -6.157, lat = 53.289, zoom = 8) %>%
+      addCircleMarkers(
+        lat = ~Latitude, lng = ~Longitude,
+        label = ~paste("Label:", Town),
+        radius = tourism$Number / 1500,
+        color = qpal(tourism$Purpose),
+        stroke = FALSE, fillOpacity = 0.5
+      ) %>%
+      setView(lng = -6.157, lat = 53.289, zoom = 6) %>%
       addLegend(pal = qpal, value = ~Purpose, title= "Purpose Type")
     
   })
