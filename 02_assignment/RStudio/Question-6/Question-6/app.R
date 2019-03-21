@@ -52,12 +52,12 @@ server <- function(input, output) {
       addTiles() %>%
       addCircleMarkers(
         lat = ~Latitude, lng = ~Longitude,
-        label = ~paste("Label:", Town),
-        radius = tourism$Number / 1500,
+        label = ~paste("Label:", Town, "Visitors:", Number),
+        radius = tourism$Number / 1000,
         color = qpal(tourism$Purpose),
         stroke = FALSE, fillOpacity = 0.5
       ) %>%
-      setView(lng = -6.157, lat = 53.289, zoom = 6) %>%
+      setView(lng = -6.157, lat = 53.289, zoom = 7) %>%
       addLegend(pal = qpal, value = ~Purpose, title= "Purpose Type")
     
   })
